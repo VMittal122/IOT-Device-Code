@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
             
               Center(
-                child: Container(
+                child: SizedBox(
                   width:250,
                   height: 80,
                   child: Image.asset(
