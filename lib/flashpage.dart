@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // For Timer
+import 'login.dart';
+import 'dart:async';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key); // Added key parameter
+  const SplashScreen({super.key}); // Modern syntax for key
 
   @override
-  SplashScreenState createState() => SplashScreenState(); // Made State class public
+  SplashScreenState createState() => SplashScreenState();
 }
 
 class SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
@@ -16,7 +17,6 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
   void initState() {
     super.initState();
 
-    // Animation controller setup
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -27,20 +27,19 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
       curve: Curves.easeIn,
     );
 
-    _controller.forward(); // Start the animation
+    _controller.forward();
 
-    // Timer to go to HomePage after 4 seconds
     Timer(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()), // Ensure this matches your actual class name
       );
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Clean up
+    _controller.dispose();
     super.dispose();
   }
 
@@ -56,7 +55,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
         height: screenHeight,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('background.png'), // Replace with your actual file
+            image: AssetImage('background.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -80,7 +79,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
                   '- Never stock out',
                   style: TextStyle(
                     fontSize: screenWidth * 0.05,
-                    fontFamily: 'HachiMaruPop', // corrected typo: both texts should use HachiMaruPop
+                    fontFamily: 'HachiMaruPop',
                     fontStyle: FontStyle.italic,
                     color: Colors.blue.shade700,
                   ),
@@ -88,23 +87,6 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Dummy HomePage
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key); // Added key parameter
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(
-          'Welcome to AutoStock!',
-          style: TextStyle(fontSize: 24),
         ),
       ),
     );

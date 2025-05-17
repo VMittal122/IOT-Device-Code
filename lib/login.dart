@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'create_account_page.dart'; // Ensure this file exists
+import 'create_account_page.dart';
+import 'package:iot_device/homepage.dart'; // Ensure 'Homepage' is correctly defined here
 
 final Logger logger = Logger();
 
@@ -35,10 +36,9 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-            
               Center(
                 child: SizedBox(
-                  width:250,
+                  width: 250,
                   height: 80,
                   child: Image.asset(
                     'assets/logo.png',
@@ -47,7 +47,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 20),
-
               const Text(
                 'Welcome Back',
                 style: TextStyle(
@@ -166,6 +165,11 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       logger.i('Login successful');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -218,8 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const CreateAccountPage()),
+                            builder: (context) => const CreateAccountPage()),
                       );
                     },
                     child: const Text(

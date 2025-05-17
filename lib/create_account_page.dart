@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login.dart'; // <--- Link to Login Page!
+import 'login.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -15,6 +15,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _deviceIDController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -23,6 +24,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     _fullNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _deviceIDController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -30,7 +32,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   void _createAccount() {
     if (_formKey.currentState!.validate() && isChecked) {
-      // Normally, you would call an API here.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Account Created Successfully!'),
@@ -61,8 +62,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             children: [
               // Logo
               Center(
-                child: SizedBox( // ✅ Changed from Container to SizedBox
-                  width: 80,
+                child: SizedBox(
+                  width: 200,
                   height: 80,
                   child: Image.asset(
                     'assets/logo.png',
@@ -131,6 +132,31 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 icon: Icons.phone_outlined,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Enter phone number' : null,
+              ),
+              const SizedBox(height: 15),
+
+              // Device ID
+              _buildTextField(
+                controller: _deviceIDController,
+                hintText: 'Device ID',
+                icon: Icons.devices_other_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Enter device ID' : null,
+              ),
+              const SizedBox(height: 4),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    '*The Device ID is written on the back of the device.',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 15),
 
@@ -246,7 +272,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pop(context); // ✅ Go back to LoginPage
+                      Navigator.pop(context);
                     },
                     child: const Text(
                       'Log in',
