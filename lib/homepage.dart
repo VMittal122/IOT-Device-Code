@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add Device'),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Stats'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Manage'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
