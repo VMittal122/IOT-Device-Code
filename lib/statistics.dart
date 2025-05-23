@@ -1,17 +1,27 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'homepage.dart';
+import 'add_device_page.dart';
+import 'setting_page.dart';
 
-class ChartPage extends StatelessWidget {
-  ChartPage({super.key});
+class StatisticsPage extends StatefulWidget {
+  const StatisticsPage({super.key});
 
-  List<Map<String, dynamic>> get data => [
-        {'time': DateTime.now().subtract(Duration(minutes: 5)), 'temperature': 22, 'humidity': 60, 'light': 200},
-        {'time': DateTime.now().subtract(Duration(minutes: 4)), 'temperature': 23, 'humidity': 62, 'light': 210},
-        {'time': DateTime.now().subtract(Duration(minutes: 3)), 'temperature': 24, 'humidity': 64, 'light': 230},
-        {'time': DateTime.now().subtract(Duration(minutes: 2)), 'temperature': 25, 'humidity': 63, 'light': 220},
-        {'time': DateTime.now().subtract(Duration(minutes: 1)), 'temperature': 26, 'humidity': 65, 'light': 240},
-      ];
+  @override
+  State<StatisticsPage> createState() => _StatisticsPageState();
+}
+
+class _StatisticsPageState extends State<StatisticsPage> {
+  int _currentIndex = 2;
+
+  final List<Map<String, dynamic>> data = [
+    {'time': DateTime.now().subtract(const Duration(minutes: 5)), 'temperature': 22, 'humidity': 60, 'light': 200},
+    {'time': DateTime.now().subtract(const Duration(minutes: 4)), 'temperature': 23, 'humidity': 62, 'light': 210},
+    {'time': DateTime.now().subtract(const Duration(minutes: 3)), 'temperature': 24, 'humidity': 64, 'light': 230},
+    {'time': DateTime.now().subtract(const Duration(minutes: 2)), 'temperature': 25, 'humidity': 63, 'light': 220},
+    {'time': DateTime.now().subtract(const Duration(minutes: 1)), 'temperature': 26, 'humidity': 65, 'light': 240},
+  ];
 
   List<FlSpot> _getSpots(String key) {
     return List.generate(
@@ -24,7 +34,7 @@ class ChartPage extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
+      elevation: 6,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -44,8 +54,7 @@ class ChartPage extends StatelessWidget {
                         getTitlesWidget: (value, meta) {
                           if (value.toInt() < data.length) {
                             final time = data[value.toInt()]['time'] as DateTime;
-                            return Text(DateFormat.Hm().format(time),
-                                style: const TextStyle(fontSize: 10));
+                            return Text(DateFormat.Hm().format(time), style: const TextStyle(fontSize: 10));
                           }
                           return const SizedBox.shrink();
                         },
@@ -69,6 +78,7 @@ class ChartPage extends StatelessWidget {
                       color: color,
                       barWidth: 3,
                       belowBarData: BarAreaData(show: false),
+                      dotData: FlDotData(show: true),
                     ),
                   ],
                 ),
@@ -80,10 +90,34 @@ class ChartPage extends StatelessWidget {
     );
   }
 
+  void _onItemTapped(int index) {
+    if (index == _currentIndex) return;
+    setState(() => _currentIndex = index);
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()));
+        break;
+      case 1:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AddDevicePage()));
+        break;
+      case 2:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
+        break;
+      case 3:
+        break;
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Module Statistics')),
+      appBar: AppBar(
+        title: const Text('AutoStock', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue.shade700,
+        centerTitle: true,
+      ),
+      backgroundColor: Colors.grey[100],
       body: ListView(
         children: [
           _buildChart("Temperature", _getSpots('temperature'), Colors.red),
@@ -92,13 +126,16 @@ class ChartPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        onTap: (index) {
-          // TODO: Handle navigation
-        },
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blue.shade700,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Stats'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add Device'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart_outlined), label: 'Statistics'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),

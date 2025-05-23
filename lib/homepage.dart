@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
+import 'add_device_page.dart';
+import 'statistics.dart';
+import 'setting_page.dart';
 
-class HomePage extends StatelessWidget { 
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final int _currentIndex = 0;
+
+  void _onItemTapped(int index) {
+    if (index == _currentIndex) return;
+
+    switch (index) {
+      case 0:
+        break; // Already on HomePage
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AddDevicePage()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const StatisticsPage()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsPage()),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +65,7 @@ class HomePage extends StatelessWidget {
           children: [
             Center(
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 800),
+                duration: const Duration(milliseconds: 800),
                 curve: Curves.easeInOut,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -68,34 +105,36 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 30),
             _buildInventoryGrid(),
             const SizedBox(height: 30),
-            Center(child: _buildInfoSection(
-              title: "Mission",
-              content:
-                  "To provide busy individuals with a smart, efficient way to manage their groceries and nutrition, while fostering a sustainable, hyperlocal food ecosystem that supports local vendors and farmers.",
-            )),
+            Center(
+              child: _buildInfoSection(
+                title: "Mission",
+                content:
+                    "To provide busy individuals with a smart, efficient way to manage their groceries and nutrition, while fostering a sustainable, hyperlocal food ecosystem that supports local vendors and farmers.",
+              ),
+            ),
             const SizedBox(height: 20),
-            Center(child: _buildInfoSection(
-              title: "Vision",
-              content:
-                  "To create a future where grocery management is effortless, nutrition is prioritized, and local vendors and farmers thrive by reducing reliance on large supply chains and promoting a sustainable, technology-driven, community-based food ecosystem.	",
-            )),
+            Center(
+              child: _buildInfoSection(
+                title: "Vision",
+                content:
+                    "To create a future where grocery management is effortless, nutrition is prioritized, and local vendors and farmers thrive by reducing reliance on large supply chains and promoting a sustainable, technology-driven, community-based food ecosystem.",
+              ),
+            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: const Color(0xFF2D9CDB),
         unselectedItemColor: Colors.grey,
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add Device'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Stats'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Manage'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart_outlined), label: 'Statistics'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
-        onTap: (index) {
-          // Add navigation logic here
-        },
       ),
     );
   }
@@ -110,7 +149,7 @@ class HomePage extends StatelessWidget {
 
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: 12,
@@ -124,7 +163,7 @@ class HomePage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 6,
@@ -194,7 +233,7 @@ class HomePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,

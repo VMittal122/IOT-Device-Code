@@ -81,6 +81,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
                     fontSize: screenWidth * 0.05,
                     fontFamily: 'HachiMaruPop',
                     fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
                     color: Colors.blue.shade700,
                   ),
                 ),
