@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_device/add_device_page.dart';
+import 'package:iot_device/create_account_page.dart';
 import 'package:iot_device/firebase_options.dart';
 import 'package:iot_device/flashpage.dart';
 import 'package:iot_device/homepage.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AutoStock',
       theme: ThemeData(useMaterial3: true),
-      home: const HomePage(),//Make sure this is const
+      home: const SplashScreen  (),//Make sure this is const
       debugShowCheckedModeBanner: false,
     );
   }

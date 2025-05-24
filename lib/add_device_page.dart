@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'add_device_page.dart';
+import 'statistics.dart'; // <-- make sure this file exists
+import 'setting_page.dart';   // <-- make sure this file exists
 
 class AddDevicePage extends StatefulWidget {
   const AddDevicePage({super.key});
@@ -39,9 +41,9 @@ class _AddDevicePageState extends State<AddDevicePage> {
   }
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (_currentIndex == index) return;
+
+    setState(() => _currentIndex = index);
 
     switch (index) {
       case 0:
@@ -54,13 +56,15 @@ class _AddDevicePageState extends State<AddDevicePage> {
         // Already on Add
         break;
       case 2:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Stats page coming soon!')),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const StatisticsPage()),
         );
         break;
       case 3:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings page coming soon!')),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsPage()),
         );
         break;
     }
@@ -70,20 +74,20 @@ class _AddDevicePageState extends State<AddDevicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F8FF),
-   appBar: AppBar(
-  backgroundColor: const Color(0xFF4D9BE6),
-  elevation: 0,
-  centerTitle: true,
-  title: Text(
-    'AutoStock',
-    style: TextStyle(
-      fontFamily: 'Poppins',
-      fontSize: 28,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    ),
-  ),
-),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF4D9BE6),
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'AutoStock',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Card(
