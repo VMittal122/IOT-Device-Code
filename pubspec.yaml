@@ -17,6 +17,7 @@ dependencies:
   cloud_firestore: ^4.17.0
   fl_chart: ^0.65.0
   intl: ^0.18.1  # <-- Add this line
+  provider: ^6.1.5
 
 
 dev_dependencies:

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iot_device/app/auth/provider/auth_provider.dart';
+import 'package:iot_device/app/home/homepage.dart';
+import 'package:provider/provider.dart';
 import 'login.dart';
 
 class CreateAccountPage extends StatefulWidget {
@@ -30,22 +33,30 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     super.dispose();
   }
 
-  void _createAccount() {
+  Future<void> _createAccount() async {
     if (_formKey.currentState!.validate() && isChecked) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Account Created Successfully!'),
-        ),
+      final res = await context.read<AuthProvider>().signup(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+        _fullNameController.text.trim(),
+        _phoneController.text.trim(),
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
+      if (mounted) {
+        if (res) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account creation failed.')),
+          );
+          return;
+        }
+      }
     } else if (!isChecked) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please agree to the terms.'),
-        ),
+        const SnackBar(content: Text('Please agree to the terms.')),
       );
     }
   }
@@ -65,10 +76,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 child: SizedBox(
                   width: 200,
                   height: 80,
-                  child: Image.asset(
-                    'assets/logo.png',
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.asset('assets/logo.png', fit: BoxFit.contain),
                 ),
               ),
               const SizedBox(height: 10),
@@ -101,8 +109,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 controller: _fullNameController,
                 hintText: 'Full Name',
                 icon: Icons.person_outline,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter full name' : null,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Enter full name'
+                            : null,
               ),
               const SizedBox(height: 15),
 
@@ -115,8 +126,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   if (value == null || value.isEmpty) {
                     return 'Enter email';
                   }
-                  final emailRegex =
-                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  final emailRegex = RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  );
                   if (!emailRegex.hasMatch(value)) {
                     return 'Enter valid email';
                   }
@@ -130,8 +142,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 controller: _phoneController,
                 hintText: 'Phone Number',
                 icon: Icons.phone_outlined,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter phone number' : null,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Enter phone number'
+                            : null,
               ),
               const SizedBox(height: 15),
 
@@ -140,8 +155,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 controller: _deviceIDController,
                 hintText: 'Device ID',
                 icon: Icons.devices_other_outlined,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter device ID' : null,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Enter device ID'
+                            : null,
               ),
               const SizedBox(height: 4),
               const Align(
@@ -166,8 +184,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 hintText: 'Password',
                 icon: Icons.lock_outline,
                 obscureText: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter password' : null,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Enter password'
+                            : null,
               ),
               const SizedBox(height: 15),
 
@@ -236,26 +257,33 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               const SizedBox(height: 20),
 
               // Create Account Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _createAccount,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4D9BE6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              Consumer<AuthProvider>(
+                builder: (context, provider, _) {
+                  if (provider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _createAccount,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4D9BE6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: const Text(
+                        'Create Account',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Create Account',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
 
@@ -309,9 +337,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 18.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
   }

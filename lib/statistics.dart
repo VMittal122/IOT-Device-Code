@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart';
-import 'add_device_page.dart';
-import 'setting_page.dart';
+import 'app/home/homepage.dart';
+import 'app/device/add_device_page.dart';
+import 'app/setting/setting_page.dart';
 import 'statistics.dart'; // Import itself for consistency
 
 class StatisticsPage extends StatefulWidget {

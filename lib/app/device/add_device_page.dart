@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'homepage.dart';
+import '../home/homepage.dart';
 import 'add_device_page.dart';
-import 'statistics.dart'; // <-- make sure this file exists
-import 'setting_page.dart';   // <-- make sure this file exists
+import '../../statistics.dart'; // <-- make sure this file exists
+import '../setting/setting_page.dart'; // <-- make sure this file exists
 
 class AddDevicePage extends StatefulWidget {
   const AddDevicePage({super.key});
@@ -25,7 +27,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
     super.dispose();
   }
 
-  void _saveDevice() {
+  Future<void> _saveDevice() async {
     if (_formKey.currentState!.validate()) {
       final name = _deviceNameController.text.trim();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -35,6 +37,14 @@ class _AddDevicePageState extends State<AddDevicePage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+
+      await FirebaseFirestore.instance
+          .collection('devices')
+          .doc(_deviceIdController.text.trim())
+          .update({
+            "deviceName": _deviceNameController.text.trim(),
+            "uid": FirebaseAuth.instance.currentUser!.uid,
+          });
       _deviceNameController.clear();
       _deviceIdController.clear();
     }
@@ -91,7 +101,9 @@ class _AddDevicePageState extends State<AddDevicePage> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 6,
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -120,8 +132,11 @@ class _AddDevicePageState extends State<AddDevicePage> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                     ),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Enter device name' : null,
+                    validator:
+                        (value) =>
+                            value == null || value.isEmpty
+                                ? 'Enter device name'
+                                : null,
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
@@ -135,8 +150,11 @@ class _AddDevicePageState extends State<AddDevicePage> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                     ),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Enter device ID' : null,
+                    validator:
+                        (value) =>
+                            value == null || value.isEmpty
+                                ? 'Enter device ID'
+                                : null,
                   ),
                   const SizedBox(height: 30),
                   SizedBox(

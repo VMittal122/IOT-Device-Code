@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iot_device/app/auth/provider/auth_provider.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'create_account_page.dart';
-import 'package:iot_device/homepage.dart'; // Ensure 'Homepage' is correctly defined here
+import 'package:iot_device/app/home/homepage.dart'; // Ensure 'Homepage' is correctly defined here
 
 final Logger logger = Logger();
 
@@ -40,10 +42,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: SizedBox(
                   width: 250,
                   height: 80,
-                  child: Image.asset(
-                    'assets/logo.png',
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.asset('assets/logo.png', fit: BoxFit.contain),
                 ),
               ),
               const SizedBox(height: 20),
@@ -74,7 +73,9 @@ class _LoginPageState extends State<LoginPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
                   }
-                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  final emailRegex = RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  );
                   if (!emailRegex.hasMatch(value)) {
                     return 'Please enter a valid email';
                   }
@@ -97,8 +98,11 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter password' : null,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Enter password'
+                            : null,
                 decoration: InputDecoration(
                   hintText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outline),
@@ -158,35 +162,59 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 20),
 
               // Login Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      logger.i('Login successful');
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4D9BE6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              Consumer<AuthProvider>(
+                builder: (context, provider, _) {
+                  if (provider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final res = await context.read<AuthProvider>().login(
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                          );
+
+                          if (context.mounted) {
+                            if (res) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HomePage(),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Account creation failed.'),
+                                ),
+                              );
+                              return;
+                            }
+                          }
+                          logger.i('Login successful');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4D9BE6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
               const SizedBox(height: 12),
 
@@ -222,7 +250,8 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CreateAccountPage()),
+                          builder: (context) => const CreateAccountPage(),
+                        ),
                       );
                     },
                     child: const Text(

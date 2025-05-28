@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart';
-import 'add_device_page.dart';
-import 'statistics.dart';
+import '../home/homepage.dart';
+import '../device/add_device_page.dart';
+import '../../statistics.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -87,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add Device'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart_outlined), label: 'Statistics'),
+          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Statistics'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
