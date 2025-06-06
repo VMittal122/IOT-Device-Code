@@ -3,7 +3,7 @@ import 'package:iot_device/app/auth/provider/auth_provider.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'create_account_page.dart';
-import 'package:iot_device/app/home/homepage.dart'; // Ensure 'Homepage' is correctly defined here
+import 'package:iot_device/app/home/homepage.dart';
 
 final Logger logger = Logger();
 
@@ -180,22 +180,32 @@ class _LoginPageState extends State<LoginPage> {
 
                           if (context.mounted) {
                             if (res) {
-                              Navigator.push(
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Login successful!'),
+                                  backgroundColor: Colors.green,
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const HomePage(),
+                                  builder: (_) => const HomePage(),
                                 ),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Account creation failed.'),
+                                  content: Text(
+                                    'Login failed. Please try again.',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
                                 ),
                               );
-                              return;
                             }
                           }
-                          logger.i('Login successful');
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -221,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
               // Forgot Password
               TextButton(
                 onPressed: () {
-                  // Navigate to Forgot Password
+                  // TODO: Add Forgot Password navigation
                 },
                 child: const Text(
                   'Forgot Password?',
