@@ -11,25 +11,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  int _currentIndex = 3;
-
-  void _onItemTapped(int index) {
-    if (index == _currentIndex) return;
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()));
-        break;
-      case 1:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AddDevicePage()));
-        break;
-      case 2:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const StatisticsPage()));
-        break;
-      case 3:
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,10 +23,15 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text("Settings", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text(
+            "Settings",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             elevation: 4,
             child: Column(
               children: const [
@@ -75,20 +61,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.blue.shade700,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add Device'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Statistics'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
     );

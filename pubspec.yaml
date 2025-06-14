@@ -18,6 +18,7 @@ dependencies:
   fl_chart: ^0.65.0
   intl: ^0.18.1  # <-- Add this line
   provider: ^6.1.5
+  flutter_blue_plus: 
 
 
 dev_dependencies:

@@ -150,17 +150,17 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               ),
               const SizedBox(height: 15),
 
-              // Device ID
-              _buildTextField(
-                controller: _deviceIDController,
-                hintText: 'Device ID',
-                icon: Icons.devices_other_outlined,
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? 'Enter device ID'
-                            : null,
-              ),
+              // // Device ID
+              // _buildTextField(
+              //   controller: _deviceIDController,
+              //   hintText: 'Device ID',
+              //   icon: Icons.devices_other_outlined,
+              //   validator:
+              //       (value) =>
+              //           value == null || value.isEmpty
+              //               ? 'Enter device ID'
+              //               : null,
+              // ),
               const SizedBox(height: 4),
               const Align(
                 alignment: Alignment.centerLeft,

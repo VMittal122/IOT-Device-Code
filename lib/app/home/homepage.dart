@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device/app/device/bluetooth_connection.dart';
+import 'package:iot_device/app/home/bottomsheet.dart';
 import '../device/add_device_page.dart';
 import '../../statistics.dart';
 import '../setting/setting_page.dart';
@@ -12,35 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final int _currentIndex = 0;
-
-  void _onItemTapped(int index) {
-    if (index == _currentIndex) return;
-
-    switch (index) {
-      case 0:
-        break; // Already on HomePage
-      case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const AddDevicePage()),
-        );
-        break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const StatisticsPage()),
-        );
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const SettingsPage()),
-        );
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,28 +97,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: const Color(0xFF2D9CDB),
-        unselectedItemColor: Colors.grey,
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline),
-            label: 'Add Device',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: 'Statistics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
     );
   }
 
@@ -174,15 +125,15 @@ class _HomePageState extends State<HomePage> {
                   'weight': doc.data()['weight']?.toString() ?? '0',
                 };
               }).toList();
-          return GridView.builder(
+          return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.2,
-            ),
+            // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            //   crossAxisCount: 2,
+            //   mainAxisSpacing: 12,
+            //   crossAxisSpacing: 12,
+            //   childAspectRatio: 1.2,
+            // ),
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
@@ -201,12 +152,13 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                   children: [
                     Text(
                       item['name']!,
                       style: const TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -233,7 +185,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showCustomeBottomSheet(context);
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             backgroundColor: Colors.blue[100],

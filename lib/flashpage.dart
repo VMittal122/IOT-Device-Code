@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device/app/bottom_navigation/bottom_navigation.dart';
+import 'package:iot_device/app/home/homepage.dart';
+import 'package:iot_device/util/util.dart';
 import 'app/auth/login.dart';
 import 'dart:async';
 
@@ -9,7 +13,8 @@ class SplashScreen extends StatefulWidget {
   SplashScreenState createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -22,18 +27,22 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
       vsync: this,
     );
 
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     _controller.forward();
 
     Timer(const Duration(seconds: 4), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()), // Ensure this matches your actual class name
-      );
+      var res = FirebaseAuth.instance.currentUser != null;
+      if (res) {
+        moveReplace(context, BottomNavigationPage());
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ), // Ensure this matches your actual class name
+        );
+      }
     });
   }
 
@@ -55,7 +64,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
         height: screenHeight,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('background.png'),
+            image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
           ),
         ),
