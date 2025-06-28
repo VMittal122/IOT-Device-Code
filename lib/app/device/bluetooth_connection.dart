@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -678,7 +680,8 @@ class _BluetoothConnectionPageState extends State<BluetoothConnectionPage> {
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+
           children: [
             const Text(
               'Device Data',
@@ -694,9 +697,44 @@ class _BluetoothConnectionPageState extends State<BluetoothConnectionPage> {
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: Text(
-                _imuData,
+                deviceId,
                 style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
               ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () async {
+                if (deviceId.isNotEmpty) {
+                  final res =
+                      await FirebaseFirestore.instance
+                          .collection('devices')
+                          .doc(deviceId)
+                          .get();
+
+                  if (res.exists) {
+                    await FirebaseFirestore.instance
+                        .collection('devices')
+                        .doc(deviceId)
+                        .update({
+                          "uid": FirebaseAuth.instance.currentUser!.uid,
+                        });
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('No device fetched from the bluetooth'),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text('Add this device'),
             ),
           ],
         ),

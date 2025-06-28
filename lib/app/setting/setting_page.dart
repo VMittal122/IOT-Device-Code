@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../home/homepage.dart';
 import '../device/add_device_page.dart';
-import '../../statistics.dart';
+import '../auth/statistics/statistics.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

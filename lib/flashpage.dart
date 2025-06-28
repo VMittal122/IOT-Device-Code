@@ -21,7 +21,7 @@ class SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-
+    if (mounted) {}
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,

@@ -19,6 +19,7 @@ dependencies:
   intl: ^0.18.1  # <-- Add this line
   provider: ^6.1.5
   flutter_blue_plus: 
+  http: 
 
 
 dev_dependencies:

@@ -1,16 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-void showCustomeBottomSheet(BuildContext context) {
+void showCustomeBottomSheet(BuildContext context, String id) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => CustomBottomSheet(),
+    builder: (context) => CustomBottomSheet(id: id),
   );
 }
 
 class CustomBottomSheet extends StatefulWidget {
-  const CustomBottomSheet({super.key});
+  const CustomBottomSheet({super.key, required this.id});
+
+  final String id;
 
   @override
   State<CustomBottomSheet> createState() => _CustomBottomSheetState();
@@ -18,6 +21,7 @@ class CustomBottomSheet extends StatefulWidget {
 
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
   final _textController = TextEditingController();
+  final _thresholdController = TextEditingController();
 
   @override
   void dispose() {
@@ -26,25 +30,25 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  void _handleSubmit() {
+  Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      String message = _textController.text.trim();
-
-      // Close the bottom sheet
-      Navigator.pop(context);
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Message submitted: $message'),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
-
-      // Clear the text field
+      String name = _textController.text.trim();
+      int threshold =
+          _thresholdController.text.trim().isEmpty
+              ? int.parse(_thresholdController.text.trim())
+              : 0;
       _textController.clear();
+      _thresholdController.clear();
+      Navigator.pop(context);
+      await FirebaseFirestore.instance
+          .collection('devices')
+          .doc(widget.id)
+          .update({"name": name, "threshold": threshold});
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Name Updated')));
+      }
     }
   }
 
@@ -90,7 +94,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
               // Title
               Text(
-                'Edit Name',
+                'Edit',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -126,6 +130,32 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Please enter a message';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 24),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!, width: 1),
+                      ),
+                      child: TextFormField(
+                        controller: _thresholdController,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Min Stock Quantity in gram',
+                          hintStyle: TextStyle(color: Colors.grey[500]),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.all(16),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter min stock quantity';
                           }
                           return null;
                         },

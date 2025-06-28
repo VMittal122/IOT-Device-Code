@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iot_device/app/device/bluetooth_connection.dart';
 import 'package:iot_device/app/home/bottomsheet.dart';
 import '../device/add_device_page.dart';
-import '../../statistics.dart';
+import '../auth/statistics/statistics.dart';
 import '../setting/setting_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -121,19 +121,15 @@ class _HomePageState extends State<HomePage> {
           var items =
               snapshot.data!.docs.map((doc) {
                 return {
-                  'name': doc.data()['DID'] ?? 'Unknown',
-                  'weight': doc.data()['weight']?.toString() ?? '0',
+                  'id': doc.id,
+                  'name': doc.data()['name'] ?? doc.data()['DID'] ?? "Unknown",
+                  'tare': doc.data()['tare'],
+                  'weight': doc.data()['weight'] ?? 0,
                 };
               }).toList();
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            //   crossAxisCount: 2,
-            //   mainAxisSpacing: 12,
-            //   crossAxisSpacing: 12,
-            //   childAspectRatio: 1.2,
-            // ),
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
@@ -163,7 +159,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      '${item['weight']} Kg',
+                      item['weight'] >= 1000
+                          ? '${double.parse((item['weight'] / 1000).toString()).toStringAsFixed(2)} Kg'
+                          : '${double.parse(item['weight'].toString()).floor()} g',
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 20,
@@ -174,19 +172,24 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await FirebaseFirestore.instance
+                                .collection('devices')
+                                .doc(items[index]['id'])
+                                .update({'tare': 1});
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             backgroundColor: Colors.blue[100],
                           ),
                           child: const Text(
-                            'Preview',
+                            'Tare',
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            showCustomeBottomSheet(context);
+                            showCustomeBottomSheet(context, items[index]['id']);
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),

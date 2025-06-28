@@ -7,7 +7,7 @@ class HomeProvider with ChangeNotifier {
     final res =
         await FirebaseFirestore.instance
             .collection('devices')
-            .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            // .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
             .get();
   }
 }

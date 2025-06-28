@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iot_device/app/auth/provider/auth_provider.dart';
+import 'package:iot_device/app/bottom_navigation/bottom_navigation.dart';
 import 'package:iot_device/app/home/homepage.dart';
 import 'package:provider/provider.dart';
 import 'login.dart';
@@ -43,9 +44,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       );
       if (mounted) {
         if (res) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(
+              builder: (context) => const BottomNavigationPage(),
+            ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

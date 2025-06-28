@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../home/homepage.dart';
 import 'add_device_page.dart';
-import '../../statistics.dart'; // <-- make sure this file exists
+import '../auth/statistics/statistics.dart'; // <-- make sure this file exists
 import '../setting/setting_page.dart'; // <-- make sure this file exists
 
 class AddDevicePage extends StatefulWidget {

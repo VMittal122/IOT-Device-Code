@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iot_device/app/auth/provider/auth_provider.dart';
+import 'package:iot_device/app/bottom_navigation/bottom_navigation.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'create_account_page.dart';
@@ -191,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const HomePage(),
+                                  builder: (_) => const BottomNavigationPage(),
                                 ),
                               );
                             } else {
