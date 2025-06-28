@@ -13,7 +13,12 @@ import 'package:provider/provider.dart'; // Only used import
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (_)=>AuthProvider())], child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AutoStock',
       theme: ThemeData(useMaterial3: true),
-      home: const SplashScreen  (),//Make sure this is const
+      home: const SplashScreen(), //Make sure this is const
       debugShowCheckedModeBanner: false,
     );
   }

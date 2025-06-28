@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
     switch (index) {
       case 0:
-        break; // Already on HomePage
+        break;
       case 1:
         Navigator.pushReplacement(
           context,
@@ -150,13 +150,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildInventoryGrid() {
-    // final items = [
-    //   {'name': 'Tomato', 'qty': '3.54'},
-    //   {'name': 'Potato', 'qty': '1.23'},
-    //   {'name': 'Apple', 'qty': '0.5'},
-    //   {'name': 'Carrot', 'qty': '2.82'},
-    // ];
-
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('devices').snapshots(),
       builder: (context, snapshot) {
@@ -170,10 +163,12 @@ class _HomePageState extends State<HomePage> {
           var items =
               snapshot.data!.docs.map((doc) {
                 return {
-                  'name': doc.data()['DID'] ?? 'Unknown',
+                  'id': doc.id,
+                  'name': doc.data()['label'] ?? doc.data()['DID'] ?? 'Unknown',
                   'weight': doc.data()['weight']?.toString() ?? '0',
                 };
               }).toList();
+
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -203,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      item['name']!,
+                      item['name'],
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 18,
@@ -222,18 +217,18 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () => _triggerTare(item['id']),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             backgroundColor: Colors.blue[100],
                           ),
                           child: const Text(
-                            'Preview',
+                            'Tare',
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () => _showEditModal(item),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             backgroundColor: Colors.blue[100],
@@ -251,7 +246,99 @@ class _HomePageState extends State<HomePage> {
             },
           );
         }
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  void _triggerTare(String docId) async {
+    try {
+      await FirebaseFirestore.instance.collection('devices').doc(docId).update({
+        'tare': true,
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Tare command sent')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to send tare command')),
+      );
+    }
+  }
+
+  void _showEditModal(Map<String, dynamic> item) {
+    final TextEditingController controller = TextEditingController(
+      text: item['name'],
+    );
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 40,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Edit Device Name',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[700],
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  labelText: 'Device Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await FirebaseFirestore.instance
+                        .collection('devices')
+                        .doc(item['id'])
+                        .update({'label': controller.text});
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Device name updated')),
+                    );
+                  } catch (e) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to update device name'),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2D9CDB),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 24,
+                  ),
+                ),
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        );
       },
     );
   }
