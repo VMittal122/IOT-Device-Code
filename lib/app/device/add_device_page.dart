@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../home/homepage.dart';
 import 'add_device_page.dart';
-import '../auth/statistics/statistics.dart'; // <-- make sure this file exists
+import '../statistics/statistics.dart'; // <-- make sure this file exists
 import '../setting/setting_page.dart'; // <-- make sure this file exists
 
 class AddDevicePage extends StatefulWidget {
@@ -51,7 +51,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F8FF),
+      backgroundColor: const Color.fromRGBO(243, 248, 255, 1),
       appBar: AppBar(
         backgroundColor: const Color(0xFF4D9BE6),
         elevation: 0,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iot_device/app/device/bluetooth_connection.dart';
 import 'package:iot_device/app/home/homepage.dart';
 import 'package:iot_device/app/setting/setting_page.dart';
-import 'package:iot_device/app/auth/statistics/statistics.dart';
+import 'package:iot_device/app/statistics/statistics.dart';
 
 class BottomNavigationPage extends StatefulWidget {
   const BottomNavigationPage({super.key});

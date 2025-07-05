@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iot_device/app/device/bluetooth_connection.dart';
 import 'package:iot_device/app/home/bottomsheet.dart';
 import '../device/add_device_page.dart';
-import '../auth/statistics/statistics.dart';
+import '../statistics/statistics.dart';
 import '../setting/setting_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4F8),
+      backgroundColor: const Color.fromRGBO(243, 248, 255, 1),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

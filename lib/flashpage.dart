@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iot_device/app/bottom_navigation/bottom_navigation.dart';
 import 'package:iot_device/app/home/homepage.dart';
 import 'package:iot_device/util/util.dart';
-import 'app/auth/login.dart';
+import 'app/auth/provider/login.dart';
 import 'dart:async';
 
 class SplashScreen extends StatefulWidget {

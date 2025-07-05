@@ -356,7 +356,7 @@ class _BluetoothConnectionPageState extends State<BluetoothConnectionPage> {
         return 'Disconnect';
       case BluetoothConnectionState.disconnected:
       case BluetoothConnectionState.error:
-        return 'Connect to ESP32';
+        return 'Connect to Device';
     }
   }
 
@@ -376,10 +376,17 @@ class _BluetoothConnectionPageState extends State<BluetoothConnectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WiFi Setup via Bluetooth'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
+        centerTitle: true,
         elevation: 0,
+        backgroundColor: Colors.white,
+        title: const Text(
+          'AutoStock',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
+            color: Color(0xFF2D9CDB),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),

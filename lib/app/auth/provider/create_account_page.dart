@@ -16,6 +16,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _formKey = GlobalKey<FormState>();
   bool isChecked = false;
 
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -54,7 +57,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Account creation failed.')),
           );
-          return;
         }
       }
     } else if (!isChecked) {
@@ -67,7 +69,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEFF7FF),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
         child: Form(
@@ -153,45 +155,22 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               ),
               const SizedBox(height: 15),
 
-              // // Device ID
-              // _buildTextField(
-              //   controller: _deviceIDController,
-              //   hintText: 'Device ID',
-              //   icon: Icons.devices_other_outlined,
-              //   validator:
-              //       (value) =>
-              //           value == null || value.isEmpty
-              //               ? 'Enter device ID'
-              //               : null,
-              // ),
-              const SizedBox(height: 4),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    '*The Device ID is written on the back of the device.',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-
               // Password
               _buildTextField(
                 controller: _passwordController,
                 hintText: 'Password',
                 icon: Icons.lock_outline,
-                obscureText: true,
+                obscureText: _obscurePassword,
                 validator:
                     (value) =>
                         value == null || value.isEmpty
                             ? 'Enter password'
                             : null,
+                toggleVisibility: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
               ),
               const SizedBox(height: 15),
 
@@ -200,7 +179,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 controller: _confirmPasswordController,
                 hintText: 'Confirm Password',
                 icon: Icons.lock_reset_outlined,
-                obscureText: true,
+                obscureText: _obscureConfirmPassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Confirm your password';
@@ -209,6 +188,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     return 'Passwords do not match';
                   }
                   return null;
+                },
+                toggleVisibility: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
                 },
               ),
               const SizedBox(height: 20),
@@ -329,6 +313,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     required IconData icon,
     required String? Function(String?) validator,
     bool obscureText = false,
+    VoidCallback? toggleVisibility,
   }) {
     return TextFormField(
       controller: controller,
@@ -337,6 +322,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: Icon(icon),
+        suffixIcon:
+            toggleVisibility != null
+                ? IconButton(
+                  icon: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: toggleVisibility,
+                )
+                : null,
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 18.0),
