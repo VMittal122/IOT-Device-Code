@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iot_device/app/setting/account_settings_page.dart';
-import 'package:iot_device/app/setting/founder_page.dart'; // <-- NEW page
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   void _openLocation() async {
     final Uri url = Uri.parse('https://maps.google.com');
     if (await canLaunchUrl(url)) {
@@ -23,10 +29,29 @@ class SettingsPage extends StatelessWidget {
           (_) => const Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              'Your data is securely stored and encrypted.\n\n'
-              'You can manage permissions and data from your device settings.',
+              'Your data is securely stored and encrypted. '
+              'You can adjust permissions and data settings from your device settings.',
               style: TextStyle(fontSize: 16),
             ),
+          ),
+    );
+  }
+
+  void _showFounderInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: const Text('About the Founder'),
+            content: const Text(
+              'AutoStock was created by a passionate engineer dedicated to empowering smart food management and sustainability.',
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Close'),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
           ),
     );
   }
@@ -91,10 +116,82 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _navigateToFounderPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const FounderPage()),
+  void _confirmLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: const Text("Confirm Logout"),
+            content: const Text("Are you sure you want to log out?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await FirebaseAuth.instance.signOut();
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (!mounted) return;
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/login', (route) => false);
+                },
+                child: const Text(
+                  "Logout",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: const Text("Delete Account"),
+            content: const Text(
+              "Are you sure you want to delete your account?\n\n"
+              "This action is irreversible and your data will be permanently removed.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    final uid = user.uid;
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(uid)
+                        .delete();
+                    await user.delete();
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Account deleted successfully"),
+                      ),
+                    );
+                    Navigator.of(
+                      context,
+                    ).pushNamedAndRemoveUntil('/login', (route) => false);
+                  }
+                },
+                child: const Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
     );
   }
 
@@ -160,9 +257,9 @@ class SettingsPage extends StatelessWidget {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.person_outline),
-                  title: const Text("Meet the Founder"),
+                  title: const Text("About the Founder"),
                   subtitle: const Text("Meet the creator of AutoStock"),
-                  onTap: () => _navigateToFounderPage(context),
+                  onTap: () => _showFounderInfo(context),
                 ),
                 const Divider(),
                 ListTile(
@@ -170,6 +267,41 @@ class SettingsPage extends StatelessWidget {
                   title: const Text("Location Settings"),
                   subtitle: const Text("Manage your location preferences"),
                   onTap: _openLocation,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _confirmLogout(context),
+                  icon: const Icon(Icons.logout),
+                  label: const Text("Logout"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4D9BE6),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => _confirmDeleteAccount(context),
+                  icon: const Icon(Icons.delete_outline),
+                  label: const Text("Delete Account"),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.redAccent,
+                    side: const BorderSide(color: Colors.redAccent),
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ],
             ),

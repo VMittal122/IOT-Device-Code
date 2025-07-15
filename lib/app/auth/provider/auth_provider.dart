@@ -4,48 +4,75 @@ import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoading = false;
+  String? _error;
 
   bool get isLoading => _isLoading;
+  String? get error => _error;
 
   Future<bool> login(String email, String password) async {
-   try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       return true;
-    } catch (e) {
-      print("Login failed: $e");
+    } on FirebaseAuthException catch (e) {
+      _error = e.message;
       return false;
-      // Handle login error
-    }finally {
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-   Future<bool> signup(String email, String password, String name, String phone) async {
+  Future<bool> signup(
+    String email,
+    String password,
+    String name,
+    String phone,
+  ) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
     try {
-      final res =  await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      final res = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
       if (res.user != null) {
-        await FirebaseFirestore.instance.collection('users').doc(res.user!.uid).set({
-          'email': email,
-          'name': name,
-          'phone': phone,
-          'createdAt': Timestamp.now(),
-        });
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(res.user!.uid)
+            .set({
+              'email': email,
+              'name': name,
+              'phone': phone,
+              'createdAt': Timestamp.now(),
+            });
+        return true;
       }
 
-      return true;
-    } catch (e) {
-      print("Signup failed: $e");
       return false;
-    }finally {
+    } on FirebaseAuthException catch (e) {
+      _error = e.message;
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  void logout() {
-
+  void logout() async {
+    await FirebaseAuth.instance.signOut();
     notifyListeners();
   }
-
 }

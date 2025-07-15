@@ -32,7 +32,7 @@ class FounderPage extends StatelessWidget {
                   CircleAvatar(
                     radius: 60,
                     backgroundImage: AssetImage(
-                      'assets/founder.jpg',
+                      'assets/icons/founder.jpg',
                     ), // ✅ Replace with actual image
                     backgroundColor: Colors.grey[300],
                   ),
