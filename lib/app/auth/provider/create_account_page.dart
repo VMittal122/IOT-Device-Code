@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+
 import 'auth_provider.dart';
 import 'login.dart';
 import 'package:iot_device/app/bottom_navigation/bottom_navigation.dart';
@@ -20,15 +22,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  String _fullPhoneNumber = '';
 
   @override
   void dispose() {
     _fullNameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -41,7 +43,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         _emailController.text.trim(),
         _passwordController.text.trim(),
         _fullNameController.text.trim(),
-        _phoneController.text.trim(),
+        _fullPhoneNumber.trim(), // Pass full phone number with country code
       );
       if (mounted) {
         if (res) {
@@ -71,12 +73,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     required String? Function(String?) validator,
     bool obscureText = false,
     VoidCallback? toggleVisibility,
-    TextInputType keyboardType = TextInputType.text, // ✅ Added this
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
-      keyboardType: keyboardType, // ✅ Added this
+      keyboardType: keyboardType,
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
@@ -161,17 +163,30 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               ),
               const SizedBox(height: 15),
 
-              _buildTextField(
-                controller: _phoneController,
-                hintText: 'Phone Number',
-                icon: Icons.phone_outlined,
-                keyboardType: TextInputType.phone, // ✅ Shows number pad
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? 'Enter phone number'
-                            : null,
+              // ✅ Phone with country code picker & number pad
+              IntlPhoneField(
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(),
+                  ),
+                ),
+                initialCountryCode: 'IN',
+                keyboardType: TextInputType.phone,
+                onChanged: (phone) {
+                  _fullPhoneNumber = phone.completeNumber;
+                },
+                validator: (value) {
+                  if (value == null || value.number.isEmpty) {
+                    return 'Enter phone number';
+                  }
+                  return null;
+                },
               ),
+
               const SizedBox(height: 15),
 
               _buildTextField(
