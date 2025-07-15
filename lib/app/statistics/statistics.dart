@@ -21,7 +21,7 @@ class StatisticsPage extends StatelessWidget {
           'AutoStock',
           style: TextStyle(
             fontFamily: 'Poppins',
-            fontSize: 28,
+            fontSize: 26,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),

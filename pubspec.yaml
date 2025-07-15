@@ -21,6 +21,7 @@ dependencies:
   intl: ^0.18.1
   provider: ^6.1.5
   flutter_blue_plus: ^1.31.14  # or a version you know works
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +35,7 @@ flutter:
     - assets/background.png
     - assets/icons/
     - assets/logo.png
+    - assets/founder.jpg
 
   fonts:
     - family: Poppins

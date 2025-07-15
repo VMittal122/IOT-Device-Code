@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 class HomeProvider with ChangeNotifier {
   getDevices() async {
+    // ignore: unused_local_variable
     final res =
         await FirebaseFirestore.instance
             .collection('devices')

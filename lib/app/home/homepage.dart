@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:iot_device/app/device/bluetooth_connection.dart';
 import 'package:iot_device/app/home/bottomsheet.dart';
-import '../device/add_device_page.dart';
-import '../statistics/statistics.dart';
-import '../setting/setting_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -101,13 +97,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildInventoryGrid() {
-    // final items = [
-    //   {'name': 'Tomato', 'qty': '3.54'},
-    //   {'name': 'Potato', 'qty': '1.23'},
-    //   {'name': 'Apple', 'qty': '0.5'},
-    //   {'name': 'Carrot', 'qty': '2.82'},
-    // ];
-
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('devices').snapshots(),
       builder: (context, snapshot) {
@@ -125,8 +114,10 @@ class _HomePageState extends State<HomePage> {
                   'name': doc.data()['name'] ?? doc.data()['DID'] ?? "Unknown",
                   'tare': doc.data()['tare'],
                   'weight': doc.data()['weight'] ?? 0,
+                  'threshold': doc.data()['threshold'] ?? 0,
                 };
               }).toList();
+
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -134,6 +125,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final item = items[index];
               return Container(
+                margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -148,26 +140,44 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-
                   children: [
                     Text(
-                      item['name']!,
+                      item['name'],
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Text(
-                      item['weight'] >= 1000
-                          ? '${double.parse((item['weight'] / 1000).toString()).toStringAsFixed(2)} Kg'
-                          : '${double.parse(item['weight'].toString()).floor()} g',
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          item['weight'] >= 1000
+                              ? '${(item['weight'] / 1000).toStringAsFixed(2)} Kg'
+                              : '${item['weight'].floor()} g',
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '/ ${_formatThreshold(item['threshold'])}',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -189,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            showCustomeBottomSheet(context, items[index]['id']);
+                            showCustomBottomSheet(context, items[index]['id']);
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -208,9 +218,19 @@ class _HomePageState extends State<HomePage> {
             },
           );
         }
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       },
     );
+  }
+
+  String _formatThreshold(dynamic threshold) {
+    if (threshold == null || threshold == 0) return "No threshold";
+
+    double thresholdValue = double.parse(threshold.toString());
+
+    return thresholdValue >= 1000
+        ? '${(thresholdValue / 1000).toStringAsFixed(2)} Kg'
+        : '${thresholdValue.floor()} g';
   }
 
   Widget _buildInfoSection({required String title, required String content}) {

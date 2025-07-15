@@ -376,15 +376,16 @@ class _BluetoothConnectionPageState extends State<BluetoothConnectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        backgroundColor: const Color(0xFF4D9BE6),
         elevation: 0,
-        backgroundColor: Colors.white,
+        centerTitle: true,
         title: const Text(
           'AutoStock',
           style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 26,
             fontWeight: FontWeight.bold,
-            fontSize: 28,
-            color: Color(0xFF2D9CDB),
+            color: Colors.white,
           ),
         ),
       ),
