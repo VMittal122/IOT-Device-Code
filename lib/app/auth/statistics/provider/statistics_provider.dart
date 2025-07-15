@@ -49,6 +49,7 @@ class StatisticsProvider with ChangeNotifier {
                         "carbohydrates_grams": 21,
                         "fiber_grams": 3.6,
                         "sugar_grams": 16
+                        "other_nutrients: "itsvalue"
                       }
                     },
                     {
@@ -62,8 +63,7 @@ class StatisticsProvider with ChangeNotifier {
                  - Notes for Gemini API
                 Scale nutrition values proportionally to the provided weight_grams.
                 Do not output any units except "grams" in the keys.
-                Always include all fields for each valid item: calories, protein, fat, carbohydrates, fiber, sugar, etc based on the given item
-
+                Include the nutritional value of the items 
                 If an item is invalid or ambiguous, return the error field as shown.
                   ''',
             },
